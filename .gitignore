@@ -1,4 +1,9 @@
 # Cache
+## Project
+build/
+dist/
+*.egg-info
+
 ## MacOS
 .DS_Store
 

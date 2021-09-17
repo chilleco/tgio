@@ -6,12 +6,12 @@ with open('README.md', 'r') as file:
 
 
 setup(
-    name='tggram',
-    version='0.2',
+    name='tgio',
+    version='0.1',
     description='The simplest library for Telegram bots',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/kosyachniy/tggram',
+    url='https://github.com/kosyachniy/tgio',
     author='Alexey Poloz',
     author_email='polozhev@mail.ru',
     classifiers=[
@@ -31,7 +31,7 @@ setup(
         'aiogram',
     ],
     project_urls={
-        'Source': 'https://github.com/kosyachniy/tggram',
+        'Source': 'https://github.com/kosyachniy/tgio',
     },
     license='MIT',
     include_package_data=False,
