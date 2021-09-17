@@ -1,13 +1,9 @@
-from .main import send, edit, delete, check_entry, forward
+from .main import Telegram
 
+
+__version__ = '0.2'
 
 __all__ = (
     '__version__',
-    'send',
-    'edit',
-    'delete',
-    'check_entry',
-    'forward',
+    'Telegram',
 )
-
-__version__ = '0.2'
