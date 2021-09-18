@@ -1,3 +1,7 @@
+"""
+Files functionality for the library
+"""
+
 import io
 from copy import deepcopy
 

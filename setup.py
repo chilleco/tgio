@@ -1,3 +1,7 @@
+"""
+Setup the Python package
+"""
+
 import pathlib
 import re
 from setuptools import setup, find_packages
@@ -10,12 +14,14 @@ WORK_DIR = pathlib.Path(__file__).parent
 
 
 def get_version():
+    """ Get version """
+
     txt = (WORK_DIR / 'tgio' / '__init__.py').read_text('utf-8')
 
     try:
         return re.findall(r"^__version__ = '([^']+)'\r?$", txt, re.M)[0]
-    except IndexError:
-        raise RuntimeError('Unable to determine version.')
+    except IndexError as e:
+        raise RuntimeError('Unable to determine version') from e
 
 
 setup(

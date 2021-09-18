@@ -1,5 +1,5 @@
 """
-Functionality for working with Telegram
+Library for working with Telegram
 """
 
 import io
@@ -26,7 +26,9 @@ class Telegram:
         self.bot = Bot(token=token)
         self.dp = Dispatcher(self.bot)
 
-    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-arguments,too-many-locals,
+    # pylint: disable=too-many-return-statements,too-many-branches
+    # pylint: disable=too-many-statements
     async def send(
         self,
         chat: Union[int, str, list, tuple, set],

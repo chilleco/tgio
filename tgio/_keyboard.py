@@ -1,3 +1,7 @@
+"""
+Keyboard functionality for the library
+"""
+
 from aiogram import types
 
 
@@ -13,7 +17,7 @@ def keyboard(rows, inline=False):
 
     # Empty queries
     if rows is None:
-        return
+        return None
 
     # Type formation
     if isinstance(rows, (tuple, set)):

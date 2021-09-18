@@ -13,6 +13,7 @@ test-linter-all:
 	find . -type f -name '*.py' \
 	| grep -vE 'env/' \
 	| grep -vE 'tests/' \
+	| grep -vE 'build/' \
 	| xargs $(PYTHON) -m pylint -f text \
 		--rcfile=tests/.pylintrc \
 		--msg-template='{path}:{line}:{column}: [{symbol}] {msg}'
