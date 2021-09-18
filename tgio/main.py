@@ -8,7 +8,8 @@ from typing import Union, Optional
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.exceptions import (
-    BotBlocked, CantParseEntities, MessageToDeleteNotFound, ChatNotFound,
+    BotBlocked, CantParseEntities, MessageToDeleteNotFound,
+    ChatNotFound, BadRequest,
 )
 
 from ._files import prepare_files, make_attachment
@@ -385,8 +386,8 @@ class Telegram:
         try:
             user_type = await self.bot.get_chat_member(chat, user)
             return user_type.status in ('creator', 'administrator', 'member')
-        except ChatNotFound:
-            return False
+        except (ChatNotFound, BadRequest):
+            return None
 
     async def forward(
         self,

@@ -1,0 +1,19 @@
+[MASTER]
+jobs=2
+
+[MESSAGES CONTROL]
+disable=
+[FORMAT]
+max-line-length=80
+
+[MISCELLANEOUS]
+notes=FIXME,TODO,BUG,UGLY
+
+[BASIC]
+good-names=i,j,e,f,ip,id,to,rm,el,tg,vk
+no-docstring-rgx=[(__.*__)(Type)]
+
+[DESIGN]
+max-args=8
+max-attributes=10
+min-public-methods=0
