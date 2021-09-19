@@ -44,7 +44,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     keywords='simple, Telegram, bot',
-    packages=find_packages(exclude=('tests',)),
+    packages=find_packages(exclude=('tests', 'examples')),
     python_requires='>=3.7, <4',
     install_requires=[
         'aiogram',

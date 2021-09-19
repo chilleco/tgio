@@ -24,6 +24,7 @@ async def echo(message: tg.types.Message):
     await tg.send(chat, text)
 
 
+# pylint: disable=unused-argument
 async def on_start(dp):
     """ Handler on the bot start """
 
