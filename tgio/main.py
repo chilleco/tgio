@@ -7,6 +7,7 @@ from typing import Union, Optional
 
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
+from aiogram.utils.executor import start_webhook
 from aiogram.utils.exceptions import (
     BotBlocked, CantParseEntities, MessageToDeleteNotFound,
     ChatNotFound, BadRequest,
@@ -23,8 +24,12 @@ FILES_LIMIT = 10
 
 class Telegram:
     def __init__(self, token):
+        self.types = types
         self.bot = Bot(token=token)
         self.dp = Dispatcher(self.bot)
+        self.set = self.bot.set_webhook
+        self.start = start_webhook
+        self.stop = self.bot.delete_webhook
 
     # pylint: disable=too-many-arguments,too-many-locals,
     # pylint: disable=too-many-return-statements,too-many-branches

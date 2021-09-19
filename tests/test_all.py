@@ -4,7 +4,7 @@ from . import tg, PATH, USER
 
 
 @pytest.mark.asyncio
-async def test_send():
+async def test_all():
     # MESSAGE
     # Send message
     mes_ids = await tg.send(USER, 'ola')
