@@ -3,6 +3,7 @@ jobs=2
 
 [MESSAGES CONTROL]
 disable=duplicate-code
+
 [FORMAT]
 max-line-length=80
 
