@@ -9,8 +9,8 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
 from aiogram.utils.exceptions import (
-    BotBlocked, CantParseEntities, MessageToDeleteNotFound,
-    ChatNotFound, BadRequest,
+    CantParseEntities, MessageToDeleteNotFound, BadRequest,
+    BotBlocked, UserDeactivated, GroupDeactivated, ChatNotFound,
 )
 
 from ._files import prepare_files, make_attachment
@@ -286,8 +286,9 @@ class Telegram:
                     allow_sending_without_reply=True,
                 )
 
-        except BotBlocked:
+        except (BotBlocked, UserDeactivated, GroupDeactivated):
             return None
+
         except CantParseEntities:
             return await self.send(
                 chat,
@@ -412,5 +413,5 @@ class Telegram:
                 message,
                 disable_notification=silent,
             ))['message_id']
-        except BotBlocked:
+        except (BotBlocked, UserDeactivated, GroupDeactivated):
             return 0
