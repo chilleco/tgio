@@ -5,7 +5,7 @@ Initializing the Python package
 from .main import Telegram
 
 
-__version__ = '0.6'
+__version__ = '0.7'
 
 __all__ = (
     '__version__',

@@ -290,6 +290,19 @@ class Telegram:
             return None
 
         except CantParseEntities:
+            if markup == 'MarkdownV2':
+                return await self.send(
+                    chat,
+                    text,
+                    buttons,
+                    inline,
+                    reserv,
+                    'Markdown',
+                    preview,
+                    reply,
+                    silent,
+                )
+
             return await self.send(
                 chat,
                 text,

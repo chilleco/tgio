@@ -476,3 +476,8 @@ async def test_all():
         (await tg.send(USER, 'ola'))[0],
     )
     assert isinstance(mes_id, int)
+
+    # MarkdownV2 spec symbols
+    # https://core.telegram.org/bots/api#markdownv2-style
+    mes_id = await tg.send(USER, '.*test*')
+    assert isinstance(mes_id, int)
