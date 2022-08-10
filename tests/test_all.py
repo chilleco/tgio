@@ -435,14 +435,14 @@ async def test_all():
 
     # DELETE
     # Delete message
-    res = await tg.delete(
+    res = await tg.rm(
         USER,
         (await tg.send(USER, 'ola'))[0],
     )
     assert res == True
 
     # Delete wrong message
-    res = await tg.delete(
+    res = await tg.rm(
         USER,
         [
             (

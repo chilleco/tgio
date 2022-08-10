@@ -9,8 +9,8 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
 from aiogram.utils.exceptions import (
-    CantParseEntities, MessageToDeleteNotFound, BadRequest,
-    BotBlocked, UserDeactivated, GroupDeactivated, ChatNotFound,
+    CantParseEntities, MessageToDeleteNotFound, BadRequest, BotBlocked,
+    UserDeactivated, GroupDeactivated, ChatNotFound, MessageCantBeDeleted,
 )
 
 from ._files import prepare_files, make_attachment
@@ -379,7 +379,7 @@ class Telegram:
             disable_web_page_preview=not preview,
         ))['message_id']
 
-    async def delete(
+    async def rm(
         self,
         chat: Union[int, str],
         message: Union[int, str, list, tuple, set],
@@ -388,13 +388,13 @@ class Telegram:
 
         if isinstance(message, (list, tuple, set)):
             return [
-                await self.delete(chat, el)
+                await self.rm(chat, el)
                 for el in message
             ]
 
         try:
             return await self.bot.delete_message(chat, message)
-        except MessageToDeleteNotFound:
+        except (MessageToDeleteNotFound, MessageCantBeDeleted):
             return False
 
     async def check_entry(
