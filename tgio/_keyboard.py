@@ -59,7 +59,10 @@ def keyboard(rows, inline=False):
                     col['name'],
                     **(
                         {'url': col['data']}
-                        if col['data'][:4] == 'http'
+                        if (
+                            col['data'][:4] == 'http'
+                            or col['data'][:5] == 'tg://'
+                        )
                         else {'callback_data': col['data']}
                     ),
                 ) for col in cols
