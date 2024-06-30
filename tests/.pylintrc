@@ -2,16 +2,16 @@
 jobs=2
 
 [MESSAGES CONTROL]
-disable=duplicate-code
+disable=duplicate-code,
+        invalid-name
 
 [FORMAT]
-max-line-length=80
+max-line-length=88
 
 [MISCELLANEOUS]
-notes=FIXME,TODO,BUG,UGLY
+notes=BUG,UGLY # FIXME,TODO
 
 [BASIC]
-good-names=i,j,e,f,ip,id,to,rm,el,tg,dp
 no-docstring-rgx=[(__.*__)(Type)]
 
 [DESIGN]

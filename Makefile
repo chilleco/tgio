@@ -44,6 +44,10 @@ test-unit:
 	| awk '{print $$2}' \
 	| xargs $(PYTHON) -m pytest -s
 
+test:
+	make test-linter-all
+	make test-unit-all
+
 release:
 	$(PYTHON) setup.py sdist bdist_wheel
 	sudo $(PYTHON) -m twine upload dist/*

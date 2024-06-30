@@ -5,13 +5,10 @@ Library for working with Telegram
 import io
 from typing import Union, Optional
 
-from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher
-from aiogram.utils.executor import start_webhook
-from aiogram.utils.exceptions import (
-    CantParseEntities, MessageToDeleteNotFound, BadRequest, BotBlocked,
-    UserDeactivated, GroupDeactivated, ChatNotFound, MessageCantBeDeleted,
-)
+from aiogram import Bot, Dispatcher, types
+
+# from aiogram.dispatcher.webhook import configure_webhook, StartWebhook
+from aiogram.exceptions import AiogramError, TelegramAPIError, TelegramBadRequest
 
 from ._files import prepare_files, make_attachment
 from ._keyboard import keyboard
@@ -26,10 +23,11 @@ class Telegram:
     def __init__(self, token):
         self.types = types
         self.bot = Bot(token=token)
-        self.dp = Dispatcher(self.bot)
-        self.set = self.bot.set_webhook
-        self.start = start_webhook
-        self.stop = self.bot.delete_webhook
+        self.dp = Dispatcher()
+        # self.dp.include_router(self.bot.router)  # TODO: need?
+        # self.set = self.bot.set_webhook
+        # self.start = StartWebhook
+        # self.stop = self.bot.delete_webhook
 
     # pylint: disable=too-many-arguments,too-many-locals,
     # pylint: disable=too-many-return-statements,too-many-branches
@@ -37,18 +35,25 @@ class Telegram:
     async def send(
         self,
         chat: Union[int, str, list, tuple, set],
-        text: Optional[str] = '',
+        text: Optional[str] = "",
         buttons: Optional[Union[list, tuple, set, str]] = None,
         inline: Optional[bool] = False,
-        files: Optional[Union[
-            str, list, tuple, set, bytes, io.BufferedReader,
-        ]] = None,
-        markup: Optional[str] = 'MarkdownV2',
+        files: Optional[
+            Union[
+                str,
+                list,
+                tuple,
+                set,
+                bytes,
+                io.BufferedReader,
+            ]
+        ] = None,
+        markup: Optional[str] = "MarkdownV2",
         preview: Optional[bool] = False,
         reply: Optional[Union[int, str]] = None,
         silent: Optional[bool] = False,
     ):
-        """ Send message """
+        """Send message"""
 
         # NOTE: Markup: https://core.telegram.org/bots/api#formatting-options
         # NOTE: ` reply ` doesn't work with multiple images / videos
@@ -77,13 +82,13 @@ class Telegram:
                 if len(files) > FILES_LIMIT:
                     messages = []
 
-                    for i in range((len(files)-1)//FILES_LIMIT+1):
+                    for i in range((len(files) - 1) // FILES_LIMIT + 1):
                         message = await self.send(
                             chat,
                             text,
                             buttons,
                             inline,
-                            files[i*FILES_LIMIT:(i+1)*FILES_LIMIT],
+                            files[i * FILES_LIMIT : (i + 1) * FILES_LIMIT],
                             markup,
                             preview,
                             reply,
@@ -117,10 +122,10 @@ class Telegram:
 
                     messages.extend(message)
 
-                    for i in range(1, (len(text)-1)//CAPTION_LIMIT+1):
+                    for i in range(1, (len(text) - 1) // CAPTION_LIMIT + 1):
                         message = await self.send(
                             chat,
-                            text[i*CAPTION_LIMIT:(i+1)*CAPTION_LIMIT],
+                            text[i * CAPTION_LIMIT : (i + 1) * CAPTION_LIMIT],
                             buttons,
                             inline,
                             None,
@@ -138,11 +143,9 @@ class Telegram:
                     return messages
 
                 if isinstance(files, list):
-                    media = types.MediaGroup()
-                    media.attach_photo(make_attachment(files[0], text, markup))
-
+                    media = [make_attachment(files[0], text, markup)]
                     for el in files[1:]:
-                        media.attach_photo(make_attachment(el))
+                        media.append(make_attachment(el))
 
                     message = await self.bot.send_media_group(
                         chat,
@@ -152,10 +155,10 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'image':
+                elif files["type"] == "image":
                     message = await self.bot.send_photo(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
@@ -164,10 +167,10 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'video':
+                elif files["type"] == "video":
                     message = await self.bot.send_video(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
@@ -176,13 +179,13 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'audio':
+                elif files["type"] == "audio":
                     message = await self.bot.send_audio(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
-                        title=files.get('title'),
-                        performer=files.get('performer'),
+                        title=files.get("title"),
+                        performer=files.get("performer"),
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
                         disable_notification=silent,
@@ -190,10 +193,10 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'animation':
+                elif files["type"] == "animation":
                     message = await self.bot.send_animation(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
@@ -202,10 +205,10 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'voice':
+                elif files["type"] == "voice":
                     message = await self.bot.send_voice(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
@@ -214,23 +217,23 @@ class Telegram:
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'video_note':
+                elif files["type"] == "video_note":
                     message = await self.bot.send_video_note(
                         chat,
-                        files['data'],
-                        duration=files.get('duration'),
-                        length=files.get('length'),
+                        files["data"],
+                        duration=files.get("duration"),
+                        length=files.get("length"),
                         reply_markup=keyboard(buttons, inline),
                         disable_notification=silent,
                         reply_to_message_id=reply,
                         allow_sending_without_reply=True,
                     )
 
-                elif files['type'] == 'location':
+                elif files["type"] == "location":
                     message = await self.bot.send_location(
                         chat,
-                        files['data']['lat'],
-                        files['data']['lng'],
+                        files["data"]["lat"],
+                        files["data"]["lng"],
                         reply_markup=keyboard(buttons, inline),
                         disable_notification=silent,
                         reply_to_message_id=reply,
@@ -240,7 +243,7 @@ class Telegram:
                 else:
                     message = await self.bot.send_document(
                         chat,
-                        files['data'],
+                        files["data"],
                         caption=text,
                         reply_markup=keyboard(buttons, inline),
                         parse_mode=markup,
@@ -255,10 +258,10 @@ class Telegram:
                 if text and len(text) > TEXT_LIMIT:
                     messages = []
 
-                    for i in range((len(text)-1)//TEXT_LIMIT+1):
+                    for i in range((len(text) - 1) // TEXT_LIMIT + 1):
                         message = await self.send(
                             chat,
-                            text[i*TEXT_LIMIT:(i+1)*TEXT_LIMIT],
+                            text[i * TEXT_LIMIT : (i + 1) * TEXT_LIMIT],
                             buttons,
                             inline,
                             reserv,
@@ -286,54 +289,64 @@ class Telegram:
                     allow_sending_without_reply=True,
                 )
 
-        except (BotBlocked, UserDeactivated, GroupDeactivated):
-            return None
+        except TelegramAPIError as e:
+            # CantParseEntities
+            if isinstance(e, TelegramBadRequest) and "can't parse entities" in str(e):
+                if markup == "MarkdownV2":
+                    return await self.send(
+                        chat,
+                        text,
+                        buttons,
+                        inline,
+                        reserv,
+                        "Markdown",
+                        preview,
+                        reply,
+                        silent,
+                    )
 
-        except CantParseEntities:
-            if markup == 'MarkdownV2':
                 return await self.send(
                     chat,
                     text,
                     buttons,
                     inline,
                     reserv,
-                    'Markdown',
+                    None,
                     preview,
                     reply,
                     silent,
                 )
 
-            return await self.send(
-                chat,
-                text,
-                buttons,
-                inline,
-                reserv,
-                None,
-                preview,
-                reply,
-                silent,
-            )
+            # (BotBlocked, UserDeactivated, GroupDeactivated)
+            print(type(e), str(e))  # FIXME
+            return None
 
         if isinstance(message, (list, tuple)):
-            return [el['message_id'] for el in message]
+            return [el.message_id for el in message]
 
-        return [message['message_id']]
+        return [message.message_id]
 
     async def edit(
         self,
         chat: Union[int, str],
         message: Union[int, str],
-        text: Optional[str] = '',
+        text: Optional[str] = "",
         buttons: Optional[Union[list, tuple, set, str]] = None,
         inline: Optional[bool] = False,
-        files: Optional[Union[
-            str, list, tuple, set, bytes, io.BufferedReader,
-        ]] = None,
-        markup: Optional[str] = 'MarkdownV2',
+        files: Optional[
+            Union[
+                str,
+                list,
+                tuple,
+                set,
+                bytes,
+                io.BufferedReader,
+            ]
+        ] = None,
+        markup: Optional[str] = "MarkdownV2",
         preview: Optional[bool] = False,
     ):
-        """ Edit message """
+        """Edit message"""
 
         # NOTE: 1 file per 1 message
 
@@ -344,11 +357,7 @@ class Telegram:
                 files, _ = prepare_files(files)
 
                 if isinstance(files, (list, tuple, set)):
-                    media = types.MediaGroup()
-
-                    for el in files:
-                        media.attach_photo(make_attachment(el))
-
+                    media = [make_attachment(el) for el in files]
                 else:
                     media = make_attachment(files)
 
@@ -368,33 +377,32 @@ class Telegram:
                     parse_mode=markup,
                 )
 
-            return res['message_id'] if res is not None else None
+            return res.message_id if res is not None else None
 
-        return (await self.bot.edit_message_text(
+        message = await self.bot.edit_message_text(
             text,
             chat,
             message,
             reply_markup=keyboard(buttons, inline),
             parse_mode=markup,
             disable_web_page_preview=not preview,
-        ))['message_id']
+        )
+
+        return message.message_id
 
     async def rm(
         self,
         chat: Union[int, str],
         message: Union[int, str, list, tuple, set],
     ):
-        """ Delete message """
+        """Delete message"""
 
         if isinstance(message, (list, tuple, set)):
-            return [
-                await self.rm(chat, el)
-                for el in message
-            ]
+            return [await self.rm(chat, el) for el in message]
 
         try:
             return await self.bot.delete_message(chat, message)
-        except (MessageToDeleteNotFound, MessageCantBeDeleted):
+        except AiogramError:  # (MessageToDeleteNotFound, MessageCantBeDeleted)
             return False
 
     async def check_entry(
@@ -402,12 +410,12 @@ class Telegram:
         chat: Union[int, str],
         user: Union[int, str],
     ):
-        """ Check a user entry into a chat """
+        """Check a user entry into a chat"""
 
         try:
             user_type = await self.bot.get_chat_member(chat, user)
-            return user_type.status in ('creator', 'administrator', 'member')
-        except (ChatNotFound, BadRequest):
+            return user_type.status in ("creator", "administrator", "member")
+        except AiogramError:  # (ChatNotFound, BadRequest)
             return None
 
     async def forward(
@@ -417,14 +425,16 @@ class Telegram:
         message: Union[int, str],
         silent: Optional[bool] = False,
     ):
-        """ Forward message """
+        """Forward message"""
+
+        message = await self.bot.forward_message(
+            chat,
+            from_chat,
+            message,
+            disable_notification=silent,
+        )
 
         try:
-            return (await self.bot.forward_message(
-                chat,
-                from_chat,
-                message,
-                disable_notification=silent,
-            ))['message_id']
-        except (BotBlocked, UserDeactivated, GroupDeactivated):
+            return message.message_id
+        except AiogramError:  # (BotBlocked, UserDeactivated, GroupDeactivated)
             return 0

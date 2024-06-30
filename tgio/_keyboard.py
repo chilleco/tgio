@@ -6,7 +6,7 @@ from aiogram import types
 
 
 def keyboard(rows, inline=False):
-    """ Make keyboard
+    """Make keyboard
 
     None                → No changes
     [] / [[]]           → Clear keyboard
@@ -56,16 +56,14 @@ def keyboard(rows, inline=False):
         buttons.add(
             *[
                 types.InlineKeyboardButton(
-                    col['name'],
+                    col["name"],
                     **(
-                        {'url': col['data']}
-                        if (
-                            col['data'][:4] == 'http'
-                            or col['data'][:5] == 'tg://'
-                        )
-                        else {'callback_data': col['data']}
+                        {"url": col["data"]}
+                        if (col["data"][:4] == "http" or col["data"][:5] == "tg://")
+                        else {"callback_data": col["data"]}
                     ),
-                ) for col in cols
+                )
+                for col in cols
             ]
         )
 

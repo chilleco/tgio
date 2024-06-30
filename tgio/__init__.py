@@ -2,12 +2,13 @@
 Initializing the Python package
 """
 
-from .main import Telegram
+from .main import Telegram, types
 
 
-__version__ = '0.9'
+__version__ = "0.10"
 
 __all__ = (
-    '__version__',
-    'Telegram',
+    "__version__",
+    "Telegram",
+    "types",
 )
