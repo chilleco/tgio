@@ -79,7 +79,7 @@ class Telegram:
             if files:
                 files, reserv = prepare_files(files)
 
-                if len(files) > FILES_LIMIT:
+                if isinstance(files, list | tuple | set) and len(files) > FILES_LIMIT:
                     messages = []
 
                     for i in range((len(files) - 1) // FILES_LIMIT + 1):
@@ -362,16 +362,16 @@ class Telegram:
                     media = make_attachment(files)
 
                 res = await self.bot.edit_message_media(
-                    media,
-                    chat,
-                    message,
+                    media=media,
+                    chat_id=chat,
+                    message_id=message,
                     reply_markup=keyboard(buttons, inline),
                 )
 
             if text is not None:
                 res = await self.bot.edit_message_caption(
-                    chat,
-                    message,
+                    chat_id=chat,
+                    message_id=message,
                     caption=text,
                     reply_markup=keyboard(buttons, inline),
                     parse_mode=markup,
@@ -380,9 +380,9 @@ class Telegram:
             return res.message_id if res is not None else None
 
         message = await self.bot.edit_message_text(
-            text,
-            chat,
-            message,
+            text=text,
+            chat_id=chat,
+            message_id=message,
             reply_markup=keyboard(buttons, inline),
             parse_mode=markup,
             disable_web_page_preview=not preview,

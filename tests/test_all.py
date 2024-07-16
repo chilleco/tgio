@@ -45,7 +45,6 @@ async def test_all():
 
     # MEDIA
     # Send BufferedReader
-    # BUG: TypeError: Can't instantiate abstract class InputFile without an implementation for abstract method 'read'
     with open(f"{PATH}data/test.png", "rb") as file:
         mes_ids = await tg.send(USER, files=file)
     assert len(mes_ids) == 1
@@ -512,4 +511,5 @@ async def test_all():
     # MarkdownV2 spec symbols
     # https://core.telegram.org/bots/api#markdownv2-style
     mes_id = await tg.send(USER, ".*test*")
-    assert isinstance(mes_id, int)
+    assert isinstance(mes_id, list)
+    assert isinstance(mes_id[0], int)

@@ -5,6 +5,12 @@ Keyboard functionality for the library
 from aiogram import types
 
 
+def _is_link(data):
+    if not data:
+        return False
+    return data[:4] == "http" or data[:5] == "tg://"
+
+
 def keyboard(rows, inline=False):
     """Make keyboard
 
@@ -33,38 +39,38 @@ def keyboard(rows, inline=False):
     # Clear
     if rows in ([], [[]]):
         if inline:
-            return types.InlineKeyboardMarkup()
-
+            return types.InlineKeyboardMarkup(inline_keyboard=[])
         return types.ReplyKeyboardRemove()
 
     # Determine mode
     if isinstance(rows[0][0], dict):
         inline = True
 
-    # Base
-    if inline:
-        buttons = types.InlineKeyboardMarkup()
-    else:
-        buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
-
     # Filling
+    buttons = []
     for cols in rows:
         if not inline:
-            buttons.add(*[types.KeyboardButton(col) for col in cols])
+            buttons.append([types.KeyboardButton(text=col) for col in cols])
             continue
 
-        buttons.add(
-            *[
+        buttons.append(
+            [
                 types.InlineKeyboardButton(
-                    col["name"],
+                    text=col["name"],
                     **(
                         {"url": col["data"]}
-                        if (col["data"][:4] == "http" or col["data"][:5] == "tg://")
+                        if _is_link(col["data"])
                         else {"callback_data": col["data"]}
                     ),
                 )
                 for col in cols
             ]
         )
+
+    # Base
+    if inline:
+        buttons = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+    else:
+        buttons = types.ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)
 
     return buttons

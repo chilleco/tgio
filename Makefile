@@ -5,13 +5,16 @@ setup:
 	$(PYTHON) -m pip install -r requirements.txt
 
 setup-tests:
-	python3 -m venv env
-	$(PYTHON) -m pip install -r requirements.txt
+	make setup
 	$(PYTHON) -m pip install -r tests/requirements.txt
 
 setup-release:
 	python3 -m venv env
 	$(PYTHON) -m pip install -r requirements.dev.txt
+
+setup-all:
+	make setup-tests
+	make setup-release
 
 test-linter-all:
 	find . -type f -name '*.py' \
@@ -49,6 +52,7 @@ test:
 	make test-unit-all
 
 release:
+	make clean
 	$(PYTHON) setup.py sdist bdist_wheel
 	sudo $(PYTHON) -m twine upload dist/*
 
@@ -57,3 +61,11 @@ clean:
 	rm -rf build/
 	rm -rf dist/
 	rm -rf *.egg-info/
+
+clear:
+	rm -rf env/
+	rm -rf **/env/
+	rm -rf __pycache__/
+	rm -rf **/__pycache__/
+	rm -rf .pytest_cache/
+	rm -rf **/.pytest_cache/

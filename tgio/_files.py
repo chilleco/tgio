@@ -11,44 +11,44 @@ from aiogram import types
 def prepare_files(files):
     """Prepare a file for single sending"""
 
+    # Multiple files → recursion
     if isinstance(files, (list, tuple, set)):
         data, reserv = zip(*[prepare_files(file) for file in files])
         return list(data), list(reserv)
 
+    # Default type
     if not isinstance(files, dict):
         files = {"data": files, "type": "image"}
 
+    # Without preprocessing
     if files["type"] in {
         "location",
     }:
         return files, files
 
+    # Read stream & cache
+    if isinstance(files["data"], io.BufferedReader):
+        # if files["type"] in {"video"}:
+        #     files["data"] = files["data"].file
+        files["data"] = files["data"].read()
+    reserv = deepcopy(files)
+
+    # Bytes with custom name
     if isinstance(files["data"], dict):
-        reserv = deepcopy(files)
-        files["data"] = types.InputFile(
-            io.BytesIO(files["data"]["data"]),
-            files["data"]["name"],
+        files["data"] = types.BufferedInputFile(
+            files["data"]["data"], files["data"]["name"]
         )
         return files, reserv
 
-    if not (
-        isinstance(files["data"], io.BufferedReader)
-        or (isinstance(files["data"], str) and files["data"][:4] != "http")
-    ):
-        return files, files
-
-    file = types.InputFile(files["data"])
-
-    if files["type"] in {
-        "video",
-    }:
-        files["data"] = file.file.read()
-        return files, files
-
-    file = {"name": file.filename, "data": file.file.read()}
-    files["data"] = types.InputFile(io.BytesIO(file["data"]), file["name"])
-
-    return files, {"data": file, "type": files["type"]}
+    if isinstance(files["data"], bytes):
+        files["data"] = types.BufferedInputFile(
+            files["data"], filename="file"
+        )  # FIXME: filename
+    elif isinstance(files["data"], str) and files["data"][:4] == "http":
+        files["data"] = types.URLInputFile(files["data"])
+    elif isinstance(files["data"], str):
+        files["data"] = types.FSInputFile(files["data"])
+    return files, reserv
 
 
 def make_attachment(file, text=None, markup="MarkdownV2"):
@@ -62,21 +62,21 @@ def make_attachment(file, text=None, markup="MarkdownV2"):
 
     if file["type"] == "image":
         return types.InputMediaPhoto(
-            file["data"],
+            media=file["data"],
             caption=text,
             parse_mode=markup,
         )
 
     if file["type"] == "video":
         return types.InputMediaVideo(
-            file["data"],
+            media=file["data"],
             caption=text,
             parse_mode=markup,
         )
 
     if file["type"] == "audio":
         return types.InputMediaAudio(
-            file["data"],
+            media=file["data"],
             caption=text,
             title=file.get("title"),
             performer=file.get("performer"),
@@ -84,7 +84,7 @@ def make_attachment(file, text=None, markup="MarkdownV2"):
         )
 
     return types.InputMediaDocument(
-        file["data"],
+        media=file["data"],
         caption=text,
         parse_mode=markup,
     )

@@ -31,12 +31,11 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/kosyachniy/tgio",
-    author="Alexey Poloz",
-    author_email="polozhev@mail.ru",
+    author="Alex Poloz",
+    author_email="alexypoloz@gmail.com",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
-        "Framework :: AsyncIO",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
         "License :: OSI Approved :: MIT License",
@@ -47,7 +46,7 @@ setup(
     packages=find_packages(exclude=("tests", "examples")),
     python_requires=">=3.7, <4",
     install_requires=[
-        "aiogram>=3.0.0",
+        "aiogram==3.10.0",
     ],
     project_urls={
         "Source": "https://github.com/kosyachniy/tgio",
