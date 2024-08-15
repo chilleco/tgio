@@ -16,7 +16,7 @@ setup-all:
 	make setup-tests
 	make setup-release
 
-test-linter-all:
+test-lint-all:
 	find . -type f -name '*.py' \
 	| grep -vE 'env/' \
 	| grep -vE 'tests/' \
@@ -25,7 +25,7 @@ test-linter-all:
 		--rcfile=tests/.pylintrc \
 		--msg-template='{path}:{line}:{column}: [{symbol}] {msg}'
 
-test-linter:
+test-lint:
 	git status -s \
 	| grep -vE 'tests/' \
 	| grep '\.py$$' \
@@ -48,7 +48,7 @@ test-unit:
 	| xargs $(PYTHON) -m pytest -s
 
 test:
-	make test-linter-all
+	make test-lint-all
 	make test-unit-all
 
 release:

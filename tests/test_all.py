@@ -513,3 +513,7 @@ async def test_all():
     mes_id = await tg.send(USER, ".*test*")
     assert isinstance(mes_id, list)
     assert isinstance(mes_id[0], int)
+
+    mes_id = await tg.send(USER, "Хай! Я помогу тебе 🌴")
+    assert isinstance(mes_id, list)
+    assert isinstance(mes_id[0], int)

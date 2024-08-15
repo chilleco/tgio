@@ -11,6 +11,14 @@ def _is_link(data):
     return data[:4] == "http" or data[:5] == "tg://"
 
 
+def _get_data(col):
+    if col.get("type") == "app":
+        return {"web_app": types.WebAppInfo(url=col["data"])}
+    if _is_link(col["data"]):
+        return {"url": col["data"]}
+    return {"callback_data": col["data"]}
+
+
 def keyboard(rows, inline=False):
     """Make keyboard
 
@@ -57,11 +65,7 @@ def keyboard(rows, inline=False):
             [
                 types.InlineKeyboardButton(
                     text=col["name"],
-                    **(
-                        {"url": col["data"]}
-                        if _is_link(col["data"])
-                        else {"callback_data": col["data"]}
-                    ),
+                    **_get_data(col),
                 )
                 for col in cols
             ]

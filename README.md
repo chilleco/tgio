@@ -1,4 +1,5 @@
-# TG.io
+# tgio
 The simplest Python library for Telegram bots based on AsyncIO
 
-[PyPI](https://pypi.org/project/tgio/)
+[GitHub](https://github.com/chilleco/tgio)
+ | [PyPI](https://pypi.org/project/tgio/)
