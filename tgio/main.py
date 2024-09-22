@@ -9,7 +9,8 @@ from aiogram import Bot, Dispatcher, types
 
 # from aiogram.dispatcher.webhook import configure_webhook, StartWebhook
 from aiogram.exceptions import AiogramError, TelegramAPIError, TelegramBadRequest
-from aiogram.utils.exceptions import ChatNotFound
+
+# from aiogram.utils.exceptions import ChatNotFound
 
 from ._files import prepare_files, make_attachment
 from ._keyboard import keyboard
@@ -416,7 +417,7 @@ class Telegram:
         try:
             user_type = await self.bot.get_chat_member(chat, user)
             return user_type.status in ("creator", "administrator", "member")
-        except (AiogramError, ChatNotFound):  # (ChatNotFound, BadRequest)
+        except AiogramError:  # (ChatNotFound, BadRequest)
             return None
 
     async def forward(
