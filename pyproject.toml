@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=80.9.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tgio"
+dynamic = ["version"]
+description = "The simplest library for Telegram bots"
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.9, <4"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Alex Poloz", email = "alexypoloz@gmail.com"},
+]
+keywords = ["simple", "Telegram", "bot"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "aiogram==3.22.0",
+]
+
+[project.urls]
+Source = "https://github.com/kosyachniy/tgio"
+
+[project.optional-dependencies]
+dev = [
+  "twine==6.2.0",
+  "setuptools==80.9.0",
+  "pylint==3.3.9",
+  "pytest==8.4.2",
+  "pytest-asyncio==1.2.0",
+  "build>=1.2.1",
+]
+
+[tool.setuptools]
+packages = {find = {exclude = ["tests", "examples"]}}
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = {attr = "tgio.__version__"}

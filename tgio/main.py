@@ -26,10 +26,20 @@ class Telegram:
         self.types = types
         self.bot = Bot(token=token)
         self.dp = Dispatcher()
+        self.types = types
         # self.dp.include_router(self.bot.router)  # TODO: need?
         # self.set = self.bot.set_webhook
         # self.start = StartWebhook
         # self.stop = self.bot.delete_webhook
+
+    async def start(self, on_startup, skip_updates, host, port):
+        await self.dp.start_polling(
+            self.bot,
+            on_startup=on_startup,
+            skip_updates=skip_updates,
+            host=host,
+            port=port,
+        )
 
     # pylint: disable=too-many-arguments,too-many-locals,
     # pylint: disable=too-many-return-statements,too-many-branches
@@ -81,7 +91,7 @@ class Telegram:
             if files:
                 files, reserv = prepare_files(files)
 
-                if isinstance(files, list | tuple | set) and len(files) > FILES_LIMIT:
+                if isinstance(files, (list, tuple, set)) and len(files) > FILES_LIMIT:
                     messages = []
 
                     for i in range((len(files) - 1) // FILES_LIMIT + 1):
