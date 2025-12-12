@@ -51,7 +51,7 @@ setup(
     packages=find_packages(exclude=("tests", "examples")),
     python_requires=">=3.9, <4",
     install_requires=[
-        "aiogram==3.22.0",
+        "aiogram>=3.23.0",
     ],
     project_urls={
         "Source": "https://github.com/kosyachniy/tgio",

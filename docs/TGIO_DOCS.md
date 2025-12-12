@@ -6,7 +6,7 @@ This is a concise, copy-pasteable reference for working with the `tgio` wrapper 
 - Thin convenience layer over `aiogram` focusing on sending/editing messages with minimal boilerplate.
 - Uses `aiogram.Bot` and `aiogram.Dispatcher` internally; you interact through a single `Telegram` class.
 - Handles message splitting, keyboard creation, and file preparation automatically.
-- Targets Python `>=3.9,<4` and ships with `aiogram==3.22.0`.
+- Targets Python `>=3.9,<4` and requires `aiogram>=3.23.0`.
 
 ## Installation
 ```bash
